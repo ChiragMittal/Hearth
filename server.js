@@ -16,8 +16,9 @@ app.use(function(req,res,next){
 
 const port =  9000;
 app.use(morgan("dev"));
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.urlencoded({extended: false}));
+app.use(express.json())
 
 const filePath = path.join(__dirname, 'data.csv');
 var parsedData
@@ -29,19 +30,11 @@ fs.readFile(filePath, async(error, data) => {
   //console.log(parsedData);
 });
 
-app.post("/search", express.json(), async (req, res) => {
-    var { query, field } = req.body;
-    
-  //  const encodedQuery = encodeURIComponent(query);
-    //const maxResults = 30;
-
+app.post("/search",async (req, res) => {
+    const { query, field } = req.body.body;
     const result = []
-    // if(field == "ADDRESS"){
-    //     query = query.toLowerCase()
-    // }
-    console.log(query)
     try {
-            parsedData.map(item=>{
+           await parsedData.map(item=>{
                 if(item[field].toLowerCase().includes(query.toLowerCase())){
                         result.push(item)
                 }
